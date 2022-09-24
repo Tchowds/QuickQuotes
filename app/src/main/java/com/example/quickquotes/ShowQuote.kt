@@ -26,10 +26,13 @@ class ShowQuote : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_show_quote)
 
+        val id = intent.getStringExtra("NameID")
+
         val text = FileHelper.getTextFromResources(application, R.raw.quotes)
-        //Log.i("quotes", text)
-        val line = getLine(text)
+        val line = id?.let { getLine(text, it) }
         QuoteView.text = line
+
+
 
 
         val fadeIn = AnimationUtils.loadAnimation(applicationContext, R.anim.fade_in)
@@ -38,9 +41,15 @@ class ShowQuote : AppCompatActivity() {
 
     }
 
-    fun getLine(text: String) : String{
+    fun getLine(text: String, id : String) : String{
         val quotes = parseText(text)
         if (quotes != null) {
+            for(i in 0..quotes.size-1){
+                if(id.equals(quotes[i].name, true)){
+                    AuthorView.text = quotes[i].name
+                    return findLine(quotes[i])
+                }
+            }
             return findLine(quotes[0])
         }
         else{
